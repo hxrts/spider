@@ -86,40 +86,6 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 }
 
 
-GetUser <- function(query, direction, type) {  # query Are.na for a user's channel information
-
-  message(query)
-
-  contents = connections = NULL
-  if(type == 'all') { type <- c('public', 'closed') }
-
-  # contents
-  if(direction != -1) {
-
-    user.req <-
-      str_c('https://api.are.na/v2/users/', query, '/channels') %>%
-      fromJSON
-
-    if(user.req$contents %>% length > 0) {
-
-      user <-
-        user.req$contents %>%
-        .[,names(.) %in% c('title', 'slug', 'status', 'class', 'length')] %>%
-        mutate(user.name = user.req$contents %$% user %$% `username`) %>%
-        mutate(user.slug = user.req$contents %$% user %$% `slug`) %>%
-        mutate(query = query, hierarchy = 'content') %>%
-        filter(class == 'Channel')
-
-    }
-  }
-
-  # return
-  user %>%
-  filter(status %in% type)
-
-}
-
-
 FormArrows <- function(reply) {  # format reply as source -> target table
 
     reply %>%
