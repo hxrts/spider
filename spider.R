@@ -164,6 +164,7 @@ WorldMap <- function(web) {
 
 	arrows <-
 			web$arrows %>%
+			mutate(id = str_c(source, '_', target)) %>%
 			rename(from = source, to = target)
 
 	graph <- graph_from_data_frame(arrows, directed = TRUE, vertices = objects)
@@ -176,12 +177,10 @@ WorldMap <- function(web) {
 		mutate(color = sample(colors, 50)[objects$group]) %>%
 		rename(user = user.name) %>%
 		mutate(title = str_c(
-			'<a href="https://are.na/', id, '" target="_blank">', label, '</a>
-			<ul>
-				<li>user: <a href="https://are.na/', user.slug, '" target="_blank">', user, '</a></li>
-				<li>blocks: ', length,'</li>
-				<li>betweeness: ', round(value, 2),'</li>
-			</ul>'
+			'<p>channel: <a href="https://are.na/', id, '" target="_blank">', label, '</a><br>
+			user: <a href="https://are.na/', user.slug, '" target="_blank">', user, '</a><br>
+			blocks: ', length,'<br>
+			betweeness: ', round(value, 2),'</p>'
 		))
 
 	list(objects = objects, arrows = arrows, graph = graph)
@@ -194,7 +193,7 @@ WorldMap <- function(web) {
 #---------------
 
 
-origin     = 'performance'
+origin     = 'research-tactics'
 direction  = 1                   # -1 = move up channel hierarchy | 0 = move up & down | 1 = move down
 depth      = 2                   # recursive depth
 type       = 'all'               # public | closed | all
@@ -263,6 +262,8 @@ colors <- c(
 
 server <- function(input, output) {
 
+	latch = FALSE
+
 	map <-
 		Crawl(origin, depth, direction, type) %>%
 		WorldMap
@@ -270,8 +271,8 @@ server <- function(input, output) {
 	output$network <- renderVisNetwork({
 
 		visNetwork(
-			map$objects,
-			map$arrows,
+			map$objects %>% unique,
+			map$arrows %>% unique,
 			main = list(text = 'Are.na / ', style  = 'display: inline-block; font-family: Arial; color: #9d9d9d; font-weight: bold; font-size: 20px; text-align: left'),
 			submain   = list(text = str_c('<a style="color:#585858 !important; text-decoration: none;" href="https://are.na/', origin, '" target=_blank>', map$objects %>% filter(id == origin) %$% label, '</a><br>'), style  = 'margin-left:0.3em;display:inline;font-family:Arial; font-weight:bold;font-size:20px;text-align:left'),
 			width  = '100%',
@@ -291,41 +292,65 @@ server <- function(input, output) {
 			font = '16px arial black',
 			shape = 'square',
 			shadow = FALSE,
-			scaling = list(min = 3, max = 30)
+			size = 10,
+			scaling = list(min = 3, max = 30),
+			borderWidthSelected = 0,
+			labelHighlightBold = TRUE
 		) %>%
 		visEdges(
 			shadow = FALSE,
-			selectionWidth = 0.4,
-			arrows = list(to = list(enabled = TRUE, scaleFactor = 0.5))
+			arrows = list(to = list(enabled = TRUE, scaleFactor = 0.5)),
+			selectionWidth = 1,
+			hoverWidth = 1
 		) %>%
 		visOptions(
 			selectedBy = list(variable = 'user', style = 'font-family: Arial; margin-bottom: 20px; padding: 2px; border: solid 1px #cbcbcb; display: block; outline: none; -webkit-appearance: none; -webkit-border-radius: 0px;'),
-			highlightNearest = list(enabled = TRUE, degree = 2, hover = TRUE), 
+			highlightNearest = list(enabled = TRUE, degree = 1, hover = TRUE),
 			nodesIdSelection = list(
 				useLabels = TRUE,
-				style = 'font-family: Arial; display: block; margin-top: 15px; padding: 2px; border: solid 1px #cbcbcb; outline: none; -webkit-appearance: none; -webkit-border-radius: 0px;')
+				style = 'font-family: Arial; display: block; margin-top: 15px; padding: 0px; border: solid 1px #cbcbcb; outline: none; -webkit-appearance: none; -webkit-border-radius: 0px;')
 		) %>%
-		visNodes(size = 10)
+		visInteraction(
+			tooltipStyle =
+				'position: fixed;
+				 visibility: hidden;
+				 padding: 8px 12px 1px 12px;
+				 white-space: nowrap;
+				 font-family: Arial;
+				 font-size: 14px;
+				 color: black;
+				 background-color: white;
+				 webkit-border-radius: 0;
+				 border-radius: 0;
+				 border: solid 1px #9d9d9d',
+			hover = TRUE)
 
 	})
 
 	observe({
 
-		update.map <-
-			input$origin %>%
-			Crawl(input$depth, input$direction, input$type) %>%
-			WorldMap
-
 		set.seed(input$seed)
 
+		old.map <- map
+
+		n = 0
+		if(n == 0) {
+			map <<-
+				input$origin %>%
+				Crawl(input$depth, input$direction, input$type) %>%
+				WorldMap
+		} else { n = 1 }
+
 		visNetworkProxy('network') %>%
-		visRemoveNodes(map$objects %>% anti_join(update.map$objects) %$% id) %>%
-		visUpdateNodes(update.map$objects %>% left_join(map$objects)) %>%
-		visUpdateEdges(update.map$arrows %>% left_join(map$arrows)) %>%
+		visRemoveNodes(old.map$objects$id) %>%
+		visRemoveEdges(old.map$arrows$id)
+
+		visNetworkProxy('network') %>%
+		visUpdateNodes(map$objects %>% unique) %>%
+		visUpdateEdges(map$arrows %>% unique) %>%
 		visLayout(improvedLayout = TRUE)
 
 	})
-
 }
 
 
@@ -338,7 +363,7 @@ ui <- fluidPage(
 		column(
 			6,
 			wellPanel(
-				textInput(inputId = 'origin',    label = 'Origin [ network entry point ]',                                                    value = origin,    placeholder = origin),
+				textInput(inputId = 'origin',    label = 'Origin [ network entry point, http://are.na/user/origin ]',                         value = origin,    placeholder = origin),
 				textInput(inputId = 'direction', label = 'Direction [ -1 = move up channel hierarchy | 0 = move up & down | 1 = move down ]', value = direction, placeholder = direction),
 				textInput(inputId = 'depth',     label = 'Depth [ recursive depth ]',                                                         value = depth,     placeholder = depth),
 				textInput(inputId = 'type',      label = 'Type [ public | closed | all ]',                                                    value = type,      placeholder = type),
@@ -357,18 +382,6 @@ ui <- fluidPage(
 
 
 shinyApp(ui, server)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
