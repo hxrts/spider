@@ -160,7 +160,8 @@ WorldMap <- function(web) {
 	objects <-
 		data_frame(id = web$arrows %>% unlist %>% unique) %>%
 		left_join(web$objects, by = c('id' = 'slug')) %>%
-		rename(label = title)
+		rename(label = title) %>%
+		arrange(label)
 
 	arrows <-
 			web$arrows %>%
@@ -361,10 +362,10 @@ ui <- fluidPage(
 	fluidRow(
 
 		column(
-			6,
+			5,
 			wellPanel(
-				textInput(inputId = 'origin',    label = 'Origin [ network entry point, http://are.na/user/origin ]',                         value = origin,    placeholder = origin),
-				textInput(inputId = 'direction', label = 'Direction [ -1 = move up channel hierarchy | 0 = move up & down | 1 = move down ]', value = direction, placeholder = direction),
+				textInput(inputId = 'origin',    label = 'Origin [ http://are.na/user/origin ]',                         value = origin,    placeholder = origin),
+				textInput(inputId = 'direction', label = 'Direction [ -1 = move up channel hierarchy | 0 = up & down | 1 = down ]', value = direction, placeholder = direction),
 				textInput(inputId = 'depth',     label = 'Depth [ recursive depth ]',                                                         value = depth,     placeholder = depth),
 				textInput(inputId = 'type',      label = 'Type [ public | closed | all ]',                                                    value = type,      placeholder = type),
 				textInput(inputId = 'seed',      label = 'Seed [ layout & color seed ]',                                                      value = seed,      placeholder = seed),
