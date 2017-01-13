@@ -3,7 +3,7 @@
 #----------
 
 
-pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, jsonlite, visNetwork, igraph, shiny)
+pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
 
 
 #----------
@@ -108,26 +108,74 @@ FormObjects <- function(reply) {  # format reply as channel metadata table
 }
 
 
-Crawl <- function(origin, depth, direction = 0, type = 'all') {  # main crawling loop
+Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = TRUE, pop = 'root') {  # main crawling loop
 
 	pool    = list(origin)
 	spent   = list()
 	arrows  = list()
 	objects = list()
+	exit    = 0
+
+	pop %<>% strsplit(',') %>% map(~{ strip(.x) }) %>% unlist %>% list.filter(. != origin)
+
+	if(length(pop) == 0) {
+		pop = ''
+	}
 
 	# crawl recursion
 	for(level in 1:depth) {
 
 		message(paste('\n[[ level', level, ']]\n'))
 
+		if(level == 1) {
+			if(http_status(GET(str_c('https://are.na/', origin)))$category != 'Success' | origin == '') {
+				message(str_c('no channel with the slug "', origin, '"'))
+				pool       = list('failure')
+				depth      = 1
+				type       = 'all'
+				up.initial = FALSE
+			}
+			if(depth <= 0) {
+				message('search depth must be greater than 0')
+				depth = 1
+			}
+			if(!direction %in% c(-1, 0, 1)) {
+				message('direction must be -1, 0, or 1')
+				direction = 1
+			}
+			if(! type %in% c('public', 'closed', 'all')) {
+				message('type must be public, closed, all')
+				type = 'all'
+			}
+			if(!up.initial %in% c(1, 0)) {
+				message('up.initial must be 1 or 0')
+				up.initial = 1
+			}
+		}
+
 		if(level <= length(pool)) {
 			if(pool[[level]] %>% length > 0) {
+				if(up.initial == FALSE & depth == 1) {
 
-				reply <-
-					 pool[[level]] %>%
-					 list.map(GetChannel(., direction, type)) %>%
-					 bind_rows %>%
-					 mutate(level = level)
+					reply <-
+						pool[[level]] %>%
+						list.map(GetChannel(., 1, type)) %>%
+						bind_rows %>%
+						mutate(level = level)
+
+				} else {
+
+					reply <-
+						 pool[[level]] %>%
+						 list.map(GetChannel(., direction, type)) %>%
+						 bind_rows %>%
+						 mutate(level = level)
+
+				}
+
+				if(!is.null(pop)) {
+					reply %<>% filter(!query %in% pop)
+				}
 
 				arrows[[level]] <- FormArrows(reply)
 
@@ -158,7 +206,7 @@ Crawl <- function(origin, depth, direction = 0, type = 'all') {  # main crawling
 WorldMap <- function(web) {
 
 	objects <-
-		data_frame(id = web$arrows %>% unlist %>% unique) %>%
+		data_frame(id = web$objects$slug %>% unique) %>%
 		left_join(web$objects, by = c('id' = 'slug')) %>%
 		rename(label = title) %>%
 		arrange(label)
@@ -196,9 +244,11 @@ WorldMap <- function(web) {
 
 origin     = 'research-tactics'
 direction  = 1                   # -1 = move up channel hierarchy | 0 = move up & down | 1 = move down
-depth      = 2                   # recursive depth
+depth      = 1                   # recursive depth
 type       = 'all'               # public | closed | all
 seed       = 0                   # graph layout seed
+up.initial = 1                   # move up channel hierarchy of origin channel
+pop        = 'superchannels'     # exclude channels, comma separated
 
 set.seed(seed)
 
@@ -266,7 +316,7 @@ server <- function(input, output) {
 	latch = FALSE
 
 	map <-
-		Crawl(origin, depth, direction, type) %>%
+		Crawl(origin, depth, direction, type, up.initial) %>%
 		WorldMap
 
 	output$network <- renderVisNetwork({
@@ -290,7 +340,7 @@ server <- function(input, output) {
 		# 	layoutMatrix = NULL
 		# ) %>%
 		visNodes(
-			font = '16px arial black',
+			font = '20px arial black',
 			shape = 'square',
 			shadow = FALSE,
 			size = 10,
@@ -330,7 +380,12 @@ server <- function(input, output) {
 
 	observe({
 
-		set.seed(input$seed)
+		seed <- input$seed
+
+		if(!is.numeric(seed)) {
+			seed <- '0'
+		}
+		set.seed(seed)
 
 		old.map <- map
 
@@ -338,7 +393,7 @@ server <- function(input, output) {
 		if(n == 0) {
 			map <<-
 				input$origin %>%
-				Crawl(input$depth, input$direction, input$type) %>%
+				Crawl(input$depth, input$direction, input$type, up.initial, input$pop) %>%
 				WorldMap
 		} else { n = 1 }
 
@@ -357,32 +412,32 @@ server <- function(input, output) {
 
 ui <- fluidPage(
 
-	titlePanel('World Mapper'),
+	titlePanel('Cartograph'),
 
 	fluidRow(
 
 		column(
 			5,
 			wellPanel(
-				textInput(inputId = 'origin',    label = 'Origin [ http://are.na/user/origin ]',                         value = origin,    placeholder = origin),
-				textInput(inputId = 'direction', label = 'Direction [ -1 = move up channel hierarchy | 0 = up & down | 1 = down ]', value = direction, placeholder = direction),
-				textInput(inputId = 'depth',     label = 'Depth [ recursive depth ]',                                                         value = depth,     placeholder = depth),
-				textInput(inputId = 'type',      label = 'Type [ public | closed | all ]',                                                    value = type,      placeholder = type),
-				textInput(inputId = 'seed',      label = 'Seed [ layout & color seed ]',                                                      value = seed,      placeholder = seed),
+				textInput(inputId = 'origin',     label = 'Origin [ http://are.na/user/origin ]',                                    value = origin,    placeholder = origin),
+				textInput(inputId = 'pop',        label = 'Pop [ channels to exclude from analysis, comma separated ]',              value = pop,       placeholder = pop),
+				textInput(inputId = 'direction',  label = 'Direction [ -1 = move up channel hierarchy | 0 = up & down | 1 = down ]', value = direction, placeholder = direction),
+				textInput(inputId = 'up.initial', label = 'Move up channel hierarchy of origin channel [ 1 = True, 0 = False ]',     value = up.initial, placeholder = up.initial),
+				textInput(inputId = 'depth',      label = 'Depth [ recursive depth ]',                                               value = depth,     placeholder = depth),
+				textInput(inputId = 'type',       label = 'Type [ public | closed | all ]',                                          value = type,      placeholder = type),
+				textInput(inputId = 'seed',       label = 'Seed [ layout & color seed ]',                                            value = seed,      placeholder = seed),
 				submitButton('→')
 			)
 		),
 
 		column(
 			12,
-			visNetworkOutput('network', width = '1200px', height = '800px')
+			visNetworkOutput('network', width = '100%', height = '1200px')
 		)
 
 	)
 )
 
 
-shinyApp(ui, server)
-
-
+shiny <- function(){shinyApp(ui, server)}
 
