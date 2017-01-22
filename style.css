@@ -1,0 +1,168 @@
+
+::selection {
+	background: none;
+}
+::-moz-selection {
+	background: none;
+}
+
+* {
+	border-radius: 0 !important;
+	outline: none !important;
+	font-family: Arial;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+	color: #78CFB6;
+}
+
+h1 {
+	display: none;
+}
+
+canvas {
+	border: solid 2px #cbcbcb;
+}
+
+#maindivnetwork_proxy {
+	margin: 20px;
+}
+
+
+.col-sm-1 {
+	width: 80px;
+}
+
+
+.col-sm-2 {
+	width: 150px;
+}
+
+.col-sm-6 {
+	width: 50%;
+}
+
+@media (max-width: 768px) {
+	.col-sm-6 {
+		width: 100%;
+	}
+}
+
+.col-sm-12 {
+	width: 100%;
+}
+
+
+.col-sm-1,
+.col-sm-2,
+.col-sm-6,
+.col-sm-12 {
+	padding: 0;
+}
+
+.form-group {
+	margin-bottom: 0;
+}
+
+.well {
+	background: none;
+	border: none;
+	margin-bottom: 0;
+	padding: 12px;
+	box-shadow: none;
+}
+
+.action-button {
+	color: #333;
+	margin-top: 1.75em;
+	padding: 6px 12px 7px 11px;
+	border: solid 2px #cbcbcb;
+	box-shadow: none !important;
+
+}
+
+.action-button:hover {
+	transition: background ease-in-out .05s;
+	color: #ffffff;
+	background: #9d9d9d;
+	border-color: #9d9d9d;
+	border: solid 2px #9d9d9d;
+	box-shadow: none !important;
+}
+
+.action-button:focus {
+	transition: background ease-in-out .05s;
+	color: #ffffff !important;
+	background: #808080;
+	border-color: #808080;
+	border: solid 2px #808080;
+	box-shadow: none !important;
+}
+
+
+
+
+.selectize-input,
+.dropdown {
+	padding: 6px 12px 7px 11px;
+	transition: border-color ease-in-out .05s;
+	border: solid 2px #cbcbcb;
+	border-color: #cbcbcb;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+
+}
+
+.selectize-input.focus,
+.dropdown.focus {
+	padding: 6px 12px 7px 11px;
+	transition: border-color ease-in-out .05s;
+	border: solid 2px #9d9d9d;
+	border-color: #9d9d9d;
+	border-radius: 0 !important;
+}
+
+
+
+.form-control {
+	padding: 8px 12px 9px 11px;
+	transition: border-color ease-in-out .05s;
+	border: solid 2px #cbcbcb;
+	box-shadow: none !important;
+	height: 1px;
+	min-height: 34px;
+
+}
+
+.form-control:focus {
+	border: solid 2px #9d9d9d;
+	box-shadow: none;
+}
+
+.form-control::selection {
+	background: #BAE8DB;
+}
+
+.form-control::-moz-selection {
+	background: #BAE8DB;
+}
+
+
+.tooltip-info::selection {
+	background: #BAE8DB;
+}
+
+.tooltip-info::-moz-selection {
+	background: #BAE8DB;
+}
+
+.tooltip-info *::selection {
+	background: #BAE8DB;
+}
+
+.tooltip-info *::-moz-selection {
+	background: #BAE8DB;
+}
