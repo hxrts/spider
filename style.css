@@ -6,6 +6,21 @@
 	background: none;
 }
 
+
+select::selection {
+	background: none;
+}
+select::-moz-selection {
+	background: none;
+}
+
+select *::selection {
+	background: none;
+}
+select *::-moz-selection {
+	background: none;
+}
+
 * {
 	border-radius: 0 !important;
 	outline: none !important;
@@ -28,7 +43,7 @@ canvas {
 }
 
 #maindivnetwork_proxy {
-	margin: 20px;
+	margin: 32px 12px 12px 12px;
 }
 
 
@@ -95,18 +110,13 @@ canvas {
 
 .action-button:focus {
 	transition: background ease-in-out .05s;
-	color: #ffffff !important;
-	background: #808080;
-	border-color: #808080;
-	border: solid 2px #808080;
 	box-shadow: none !important;
 }
 
 
 
 
-.selectize-input,
-.dropdown {
+.selectize-input {
 	padding: 6px 12px 7px 11px;
 	transition: border-color ease-in-out .05s;
 	border: solid 2px #cbcbcb;
@@ -116,8 +126,7 @@ canvas {
 
 }
 
-.selectize-input.focus,
-.dropdown.focus {
+.selectize-input.focus {
 	padding: 6px 12px 7px 11px;
 	transition: border-color ease-in-out .05s;
 	border: solid 2px #9d9d9d;
@@ -125,6 +134,23 @@ canvas {
 	border-radius: 0 !important;
 }
 
+.dropdown {
+	padding: 6px 12px 7px 11px;
+	transition: border-color ease-in-out .05s;
+	/*border: solid 2px #cbcbcb;*/
+	/*border-color: #cbcbcb;*/
+	box-shadow: none !important;
+	border-radius: 0 !important;
+
+}
+
+.dropdown.focus {
+	padding: 6px 12px 7px 11px;
+	transition: border-color ease-in-out .05s;
+	/*border: solid 2px #9d9d9d;*/
+	/*border-color: #9d9d9d;*/
+	border-radius: 0 !important;
+}
 
 
 .form-control {
@@ -165,4 +191,49 @@ canvas {
 
 .tooltip-info *::-moz-selection {
 	background: #BAE8DB;
+}
+
+.dropdown,
+.dropdown:focus,
+.dropdown:active {
+	margin-left: 14px;
+	height: 33px !important;
+	padding: 6px 12px 7px 11px !important;
+	border: 0 !important;
+	outline: 2px solid #cbcbcb !important;
+	background-color: white;
+	outline-offset: 0;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+.dropdown,
+.dropdown:active {
+	background-image:
+		linear-gradient(45deg, transparent 50%, #333 50%),
+		linear-gradient(135deg, #333 50%, transparent 50%),
+		linear-gradient(to right, white, white);
+	background-position:
+		calc(100% - 20px) calc(1em + 2px),
+		calc(100% - 15px) calc(1em + 2px),
+		100% 0;
+	background-size:
+		5px 5px,
+		5px 5px,
+		2.5em 2.5em;
+	background-repeat: no-repeat;
+
+}
+
+
+.dropdown:focus {
+	outline: 2px solid #9d9d9d !important;
+}
+
+#network_proxy hr {
+	display: none;
 }

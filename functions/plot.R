@@ -7,23 +7,23 @@ PlotGraph <- function(objects, arrows, origin) {
 	visNetwork(
 			objects %>% unique,
 			arrows %>% unique,
-			main = list(text	    = 'Are.na / ',
-						style	    = 'display:     inline-block;
-									   font-family: Arial;
-									   color:       #9d9d9d;
-									   font-weight: bold;
-									   font-size:   20px;
-									   text-align:  left'),
-			submain   = list(text   = str_c('<a style="color:#585858 !important; text-decoration: none;" href="https://are.na/',
-									         origin, '" target=_blank>',
-									         objects %>% filter(id == origin) %$% label,
-									         '</a><br>'),
-							 style  = 'margin-left: 0.3em;
-									   display:     inline;
-									   font-family: Arial;
-									   font-weight: bold;
-									   font-size:   20px;
-									   text-align:  left'),
+			# main = list(text	    = 'Are.na / ',
+			# 			style	    = 'display:     inline-block;
+			# 						   font-family: Arial;
+			# 						   color:       #9d9d9d;
+			# 						   font-weight: bold;
+			# 						   font-size:   20px;
+			# 						   text-align:  left'),
+			# submain   = list(text   = str_c('<a style="color:#585858 !important; text-decoration: none;" href="https://are.na/',
+			# 						         origin, '" target=_blank>',
+			# 						         objects %>% filter(id == origin) %$% label,
+			# 						         '</a><br>'),
+			# 				 style  = 'margin-left: 0.3em;
+			# 						   display:     inline;
+			# 						   font-family: Arial;
+			# 						   font-weight: bold;
+			# 						   font-size:   20px;
+			# 						   text-align:  left'),
 			width  = '100%',
 			height = '800px'
 		) %>%
