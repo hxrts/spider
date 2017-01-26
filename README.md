@@ -23,12 +23,18 @@ Working prototype, but there are a couple setup steps for first time use:
 - run app (will launch browser)
 ```> Spider()```
 
-## To stop app
+## Usage
+
+Pick an origin channel and choose the parameters as desired.
+
+Note: The scraping is rather slow, you can watch the progrss in the command prompt. Please be patient.
+
+## Stop App
 
 - ```ctrl + c``` returns to R prompt
 - ```q()``` exits R prompt
 
-## To run again
+## Run After Installation
 
 - from spider directory run R
 ```> R```
