@@ -25,7 +25,7 @@ Working prototype, but there are a couple setup steps for first time use:
 
 ## Usage
 
-Pick an origin channel and choose the parameters as desired.
+Pick an origin channel and choose crawling parameters as desired. Clear the window after your search or add a new query to the existing graph.
 
 Note: The scraping is rather slow, you can watch the progrss in the command prompt. Please be patient.
 
