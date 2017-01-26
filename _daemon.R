@@ -2,6 +2,7 @@
 
 message('\n|-- functions')
 
+source('functions/strip.R')
 source('functions/crawl.R')
 source('functions/form.R')
 source('functions/get.R')
