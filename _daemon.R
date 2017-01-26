@@ -16,7 +16,8 @@ message('|-- libraries')
 #-----------------------
 
 
-pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
+pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph)
+library(shiny, quietly = FALSE)
 
 
 #--------------------
