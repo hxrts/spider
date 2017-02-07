@@ -17,8 +17,7 @@ message('|-- libraries')
 #-----------------------
 
 
-pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph)
-library(shiny, quietly = FALSE)
+pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
 
 
 #--------------------
@@ -64,3 +63,4 @@ colors <- c(
 	'#8ac7ff', '#75b1e8', '#b6a2d9', '#e3cdff', '#ffdeff',
 	'#ca9dc8', '#edabe8', '#f09ccc', '#ffb7de', '#e4bfcb')
 
+Spider()

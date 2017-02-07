@@ -51,7 +51,7 @@ UI <- function(origin, pop, direction, up.initial, depth, type) {
 
 			column(1, wellPanel(actionButton('clearGraph', 'Clear'))),
 
-			column(12, visNetworkOutput('network_proxy', width = '100%', height = '1000px'))
+			column(12, visNetworkOutput('network_proxy', width = '100%', height = '1200px'))
 		)
 	)
 }

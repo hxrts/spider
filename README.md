@@ -14,10 +14,6 @@ Working prototype, but there are a couple setup steps for first time use:
 ```> cd spider && R```
 - from R, install the pacman package manager
 ```> install.packages('pacman')```
-- install shiny
-```> install.packages('shiny')```
-- invoke shiny library
-```> library(shiny)```
 - import remaining code (will install remaining libraries as needed)
 ```> source('_daemon')```
 - run app (will launch browser)
@@ -38,6 +34,5 @@ Note: The scraping is rather slow, you can watch the progrss in the command prom
 
 - from spider directory run R
 ```> R```
-- ```library(shiny)```
 - ```source('_daemon')```
 - ```Spider()```

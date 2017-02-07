@@ -24,14 +24,14 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 
 		identity <-
 			data_frame( query       = query,
-							title       = identity.req$title,
-							slug        = identity.req$slug,
-							status      = identity.req$status,
-							user.name   = unlist(identity.req$user$username),
-							user.slug   = unlist(identity.req$user$slug),
-							length      = identity.req$length,
-							hierarchy   = 'identity',
-							class       = 'Channel' )
+						title       = identity.req$title,
+						slug        = identity.req$slug,
+						status      = identity.req$status,
+						user.name   = unlist(identity.req$user$username),
+						user.slug   = unlist(identity.req$user$slug),
+						length      = identity.req$length,
+						hierarchy   = 'identity',
+						class       = 'Channel' )
 
 		# contents
 		if(direction != -1) {

@@ -3,7 +3,7 @@
 message('|-- server')
 
 
-Server <- shinyServer(function(input, output, session) {
+Server <- shiny::shinyServer(function(input, output, session) {
 
 	# initialize variables
 	old.nodes = old.edges = NULL
