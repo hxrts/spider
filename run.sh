@@ -1,0 +1,1 @@
+Rscript --vanilla _daemon.R

@@ -8,8 +8,8 @@ Crawl connected Are.na channels and visualize the resulting network.
 Working prototype, but there are a couple setup steps for first time use:
 
 - install [R](https://www.r-project.org/)
-- clone the app repo
-```> git clone git@github.com:hxrts/spider.git```
+- clone the app repo and set run script permissions
+```> git clone git@github.com:hxrts/spider.git && chmod +x run.sh```
 - cd into repo directory and run R
 ```> cd spider && R```
 - from R, install the pacman package manager
@@ -28,11 +28,10 @@ Note: The scraping is rather slow, you can watch the progrss in the command prom
 ## Stop App
 
 - ```ctrl + c``` returns to R prompt
-- ```q()``` exits R prompt
+- ```q()``` exits R prompt if open
 
 ## Run After Installation
 
 - from spider directory run R
-```> R```
-- ```source('_daemon')```
-- ```Spider()```
+```> ./run.sh
+- point your browser to the address displayed
