@@ -34,9 +34,9 @@ Note: The scraping is rather slow, you can watch the progrss in the command prom
 
 - [optional] specify local port in config.txt file
 - from spider directory run startup script
-```> ./run.sh
+```> ./run.sh```
 - point your browser to the address displayed
 
 ## Note
 
-- Please put interesting results in the channel 'World Maps' with some information about the parameters used to generate the plot.
+- Add interesting results in the channel 'World Maps' with some information about the parameters used to generate the plot.
