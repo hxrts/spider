@@ -16,7 +16,7 @@ Working prototype, but there are a couple setup steps for first time use:
 ```> install.packages('pacman')```
 - import remaining code (will install remaining libraries as needed)
 ```> source('_daemon')```
-- run app (will launch browser)
+- run app
 ```> Spider()```
 
 ## Usage
