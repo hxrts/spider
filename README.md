@@ -20,7 +20,7 @@ Working prototype, but there are a couple setup steps for first time use:
 ## Run
 
 - [optional] specify local port in config.txt file
-- from spider directory run startup script ```> ./run.sh```
+- from spider directory run startup script ```> sh run.sh```
 - point your browser to the address displayed
 
 ## Usage
