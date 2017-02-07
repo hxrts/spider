@@ -17,7 +17,7 @@ message('|-- libraries')
 #-----------------------
 
 
-pacman::p_load(dplyr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
+pacman::p_load(dplyr, readr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
 
 
 #--------------------
@@ -25,10 +25,11 @@ message('|-- daemon')
 #--------------------
 
 
-Spider <- function(){ shinyApp(
+Spider <- function(port = 3030){ shinyApp(
 
 	UI(origin, pop, direction, up.initial, depth, type),
-	Server
+	Server,
+	options = list(port = port)
 
 )}
 
@@ -63,4 +64,34 @@ colors <- c(
 	'#8ac7ff', '#75b1e8', '#b6a2d9', '#e3cdff', '#ffdeff',
 	'#ca9dc8', '#edabe8', '#f09ccc', '#ffb7de', '#e4bfcb')
 
-Spider()
+
+# read in config
+config <- suppressMessages(read_delim('config.txt', delim = '=', col_names = FALSE))
+
+
+if(nrow(config) == 0) {
+
+	message('config file empty, trying default port: 3030')
+	port <- 3030
+
+} else {
+	# parse config file
+	params <-
+		config %>%
+		set_names(c('param', 'value')) %>%
+		mutate_each(funs(strip))
+
+	# get port value
+	port <-
+		params %>%
+		filter(param == 'port') %>%
+		slice(1) %$%
+		value %>%
+		as.numeric
+
+	message(str_c('using specified port: ', port))
+}
+
+# run spider
+Spider(port = port)
+
