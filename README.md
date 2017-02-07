@@ -9,16 +9,18 @@ Working prototype, but there are a couple setup steps for first time use:
 
 - install [R](https://www.r-project.org/)
 - clone the repo, move into app directory, set permissions for run script, and start R environment
+
 ```> git clone git@github.com:hxrts/spider.git && cd spider && chmod +x run.sh && R```
+
 - from R, install the pacman package manager and import remaining code to install libraries as needed, exit upon completion
+
 ```> install.packages('pacman') ; source('_daemon') ; q(save = 'no')```
 
 
 ## Run
 
 - [optional] specify local port in config.txt file
-- from spider directory run startup script
-```> ./run.sh```
+- from spider directory run startup script ```> ./run.sh```
 - point your browser to the address displayed
 
 ## Usage
