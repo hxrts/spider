@@ -11,6 +11,8 @@ UI <- function(origin, pop, direction, up.initial, depth, type) {
 		headerPanel('spider'),
 		fluidRow(
 
+			tags$head(tags$link(rel = 'shortcut icon', href = 'https://rawgit.com/hxrts/spider/master/favicon.png')),
+
 			column(6, wellPanel(
 				textInput(
 				inputId = 'origin',
