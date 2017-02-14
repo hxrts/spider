@@ -14,7 +14,7 @@ Working prototype, but there are a couple setup steps for first time use:
 
 - from R, install the pacman package manager and import remaining code to install libraries as needed, exit upon completion
 
-```> install.packages('pacman') ; source('_daemon') ; q(save = 'no')```
+```> install.packages('pacman') ; source('_daemon.R') ; q(save = 'no')```
 
 
 ## Run
