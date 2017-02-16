@@ -7,6 +7,7 @@ Crawl connected Are.na channels and visualize the resulting network.
 
 Working prototype, but there are a couple setup steps for first time use:
 
+- install [XQuartz](https://www.xquartz.org/) if you don't yet have it
 - install [R](https://www.r-project.org/)
 - clone the repo, move into app directory, set permissions for run script, and start R environment
 

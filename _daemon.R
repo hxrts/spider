@@ -17,6 +17,10 @@ message('|-- libraries')
 #-----------------------
 
 
+if(!'shiny' %in% rownames(installed.packages())) {
+	install.packages(shiny)
+}
+
 pacman::p_load(dplyr, readr, tidyr, stringr, magrittr, purrr, rlist, httr, jsonlite, visNetwork, igraph, shiny)
 
 
