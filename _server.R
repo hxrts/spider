@@ -77,13 +77,11 @@ Server <- shiny::shinyServer(function(input, output, session) {
 					input$network_proxy_edges %>%
 					map(~ { dplyr::as_data_frame(rbind(unlist(.x))) }) %>%
 					bind_rows
-				#print(old.edges)
 
 				old.nodes <-
 					input$network_proxy_nodes %>%
 					map(~ { dplyr::as_data_frame(rbind(unlist(.x))) }) %>%
 					bind_rows
-				#print(old.nodes)
 
 				visNetworkProxy('network_proxy') %>%
 				visRemoveNodes(old.nodes$id) %>%

@@ -45,12 +45,23 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 
 				} else {
 
-					reply <-
-						 pool[[level]] %>%
-						 list.map(GetChannel(., direction, type)) %>%
-						 bind_rows %>%
-						 mutate(level = level)
+					queries <- split(pool[[level]], ceiling(seq_along(pool[[level]])/100))
 
+					reply <- queries %>%
+					map( ~ {
+						sub.reply <-
+							.x %>%
+							list.map(GetChannel(., direction, type)) %>%
+							bind_rows %>%
+							mutate(level = level)
+
+							if(level > 2) {
+								message('\n-- pause --\n') ; Sys.sleep(20)
+							}
+
+							sub.reply
+					}) %>%
+					bind_rows
 				}
 
 				if(!is.null(pop)) {

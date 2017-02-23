@@ -70,6 +70,8 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 
 		if(connections.req$channels %>% length > 0) {
 
+			Sys.sleep(0.2)
+
 			user.name <- connections.req$channels$user$username
 			user.slug <- connections.req$channels$user$slug
 

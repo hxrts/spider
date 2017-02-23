@@ -1,5 +1,7 @@
 
 
+SourceDir <- function (path, pattern = '\\.[rR]$', env = NULL, chdir = TRUE) 
+
 message('\n|-- functions')
 
 source('functions/strip.R')
