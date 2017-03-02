@@ -3,7 +3,7 @@
 message('  - crawl')
 
 
-Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = TRUE, pop = '') {  # main crawling loop
+Crawl <- function(origin, depth = 1, direction = 0, type = 'all', private = NULL, up.initial = TRUE, pop = '') {  # main crawling loop
 
 	pool    = list(origin)
 	spent   = list()
@@ -11,7 +11,7 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 	objects = list()
 	exit    = 0
 
-	pop %<>% strsplit(',') %>% map(~{ strip(.x) }) %>% unlist %>% list.filter(. != origin)
+	pop %<>% strsplit(',') %>% map(~{ strip(.x) }) %>% unlist %>% list.filter(!. %in% origin)
 
 	if(length(pop) == 0) {
 		pop = ''
@@ -24,8 +24,13 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 		message(level.msg)
 
 		if(level == 1) {
-			if(http_status(GET(str_c('https://are.na/', origin)))$category != 'Success' | origin %in% c('', 'explore', 'feed', 'tools', 'about', 'blog', 'pricing')) {
-				message(str_c('no channel with the slug "', origin, '"'))
+			if(is.null(private)) {
+				channel.status <- str_c('https://are.na/', origin[1]) %>% GET %>% http_status %$% category
+			} else {
+				channel.status <- str_c('https://api.are.na/v2/channels/', origin[1], '/contents') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% http_status %$% category
+			}
+			if(channel.status != 'Success' | origin[1] %in% c('', 'explore', 'feed', 'tools', 'about', 'blog', 'pricing', 'import')) {
+				message(str_c('no channel with the slug "', origin[1], '"'))
 				pool       = list('failure')
 				depth      = 1
 				type       = 'all'
@@ -35,11 +40,11 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 
 		if(level <= length(pool)) {
 			if(pool[[level]] %>% length > 0) {
-				if(up.initial == FALSE & depth == 1) {
+				if(up.initial == FALSE & depth == 1 & length(origin) == 1) {
 
 					reply <-
 						pool[[level]] %>%
-						list.map(GetChannel(., 1, type)) %>%
+						list.map(GetChannel(., 1, type, private)) %>%
 						bind_rows %>%
 						mutate(level = level)
 
@@ -51,12 +56,12 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 					map( ~ {
 						sub.reply <-
 							.x %>%
-							list.map(GetChannel(., direction, type)) %>%
+							list.map(GetChannel(., direction, type, private)) %>%
 							bind_rows %>%
 							mutate(level = level)
 
 							if(level > 2) {
-								message('\n-- pause --\n') ; Sys.sleep(20)
+								message('\n-- pause --\n') ; Sys.sleep(5)
 							}
 
 							sub.reply
@@ -92,12 +97,18 @@ Crawl <- function(origin, depth = 1, direction = 0, type = 'all', up.initial = T
 		data_frame(id = web$objects$slug %>% unique) %>%
 		left_join(web$objects, by = c('id' = 'slug')) %>%
 		rename(label = title) %>%
+		unique %>%
+		group_by(id) %>%
+		arrange(desc(length)) %>%
+		slice(1) %>%
+		ungroup %>%
 		arrange(label)
 
 	arrows <-
 			web$arrows %>%
 			mutate(id = str_c(source, '_', target)) %>%
-			rename(from = source, to = target)
+			rename(from = source, to = target) %>%
+			unique
 
 	graph <- graph_from_data_frame(arrows, directed = TRUE, vertices = objects)
 

@@ -15,7 +15,7 @@ Server <- shiny::shinyServer(function(input, output, session) {
 	# output
 	output$network_proxy <- renderVisNetwork({
 
-		map <- Crawl(origin, depth, direction, type, up.initial, pop)
+		map <- Crawl(origin, depth, direction, type, private = NULL, up.initial, pop)
 		PlotGraph(map$objects, map$arrows, map$origin)
 
 	})
@@ -35,6 +35,12 @@ Server <- shiny::shinyServer(function(input, output, session) {
 			direction = -1
 		})
 
+		isolate(if(input$private == 'yes' & input$type == 'all') {
+			private = token
+		} else {
+			private = NULL
+		})
+
 		isolate(if(isolate(input$up.initial) == 'yes') {
 			up.initial = 1
 		} else {
@@ -46,7 +52,7 @@ Server <- shiny::shinyServer(function(input, output, session) {
 
 		isolate(if(input$buildGraph) {
 
-		map <- isolate(Crawl(input$origin, depth, direction, input$type, up.initial, input$pop))
+		map <- isolate(Crawl(input$origin, depth, direction, input$type, private, up.initial, input$pop))
 
 			visNetworkProxy('network_proxy') %>%
 			visUpdateNodes(map$objects %>% unique) %>%

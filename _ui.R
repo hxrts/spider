@@ -49,6 +49,12 @@ UI <- function(origin, pop, direction, up.initial, depth, type) {
 				choices = c('all', 'public', 'closed'),
 				multiple = FALSE))),
 
+			column(2, wellPanel(selectInput(
+				inputId = 'private',
+				label = 'Include private',
+				choices = c('yes', 'no'),
+				multiple = FALSE))),
+
 			column(1, wellPanel(actionButton('buildGraph', 'Build'))),
 
 			column(1, wellPanel(actionButton('clearGraph', 'Clear'))),

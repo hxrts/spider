@@ -10,6 +10,7 @@ source('functions/form.R')
 source('functions/get.R')
 source('functions/plot.R')
 
+if(file.exists('_secret.R')) { source('_secret.R') }
 source('_server.R')
 source('_ui.R')
 
@@ -52,7 +53,7 @@ depth      = 1
 type       = 'all'
 seed       = 0
 up.initial = 1
-pop        = 'superchannels, channels-categorizing-other-channels, root'
+pop        = 'superchannels, channels-categorizing-other-channels, root, looseleaf, dhr-quick-reference, primer'
 
 set.seed(seed)
 

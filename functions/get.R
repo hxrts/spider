@@ -8,13 +8,18 @@ message('  - get')
 #----------
 
 
-GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for channel information
+GetChannel <- function(query, direction = 0, type = 'all', private = NULL) {  # query Are.na for channel information
 
 	message(query)
 
 	identity = contents = connections = NULL
 
-	if(type == 'all') { type <- c('public', 'closed') }
+	if(type == 'all') {
+		type <- c('public', 'closed')
+		if(!is.null(private)) {
+			type <- c(type, 'private')
+		}
+	}
 
 	if(direction == 0) {
 		direction = c('identity', 'parent', 'child')
@@ -26,10 +31,33 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 
 	try({
 
+		if(depth > 3) { Sys.sleep(0.1) }
+
 		# identity
-		identity.req <-
-			str_c('https://api.are.na/v2/channels/', query, '/thumb') %>%
-			fromJSON
+		if(!is.null(private)) {
+			identity.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				})
+		} else {
+			identity.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/thumb') %>% fromJSON
+				})
+		}
+
 
 		identity <-
 			data_frame( query       = query,
@@ -42,12 +70,34 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 						hierarchy   = 'identity',
 						class       = 'Channel' )
 
+		if(depth > 3) { Sys.sleep(0.3) }
+
 		# contents
 		contents = data_frame(slug = '')
 
-		contents.req <-
-			str_c('https://api.are.na/v2/channels/', query, '/contents') %>%
-			fromJSON
+		if(!is.null(private)) {
+			contents.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				})
+		} else {
+			contents.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/contents') %>% fromJSON
+				})
+		}
 
 		if(contents.req$contents %>% length > 0) {
 
@@ -63,14 +113,35 @@ GetChannel <- function(query, direction = 0, type = 'all') {  # query Are.na for
 				filter(class == 'Channel')
 		}
 
+		Sys.sleep(0.3)
+
 		# connections
-		connections.req <-
-			str_c('https://api.are.na/v2/channels/', query, '/connections') %>%
-			fromJSON
+		if(!is.null(private)) {
+			connections.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% GET(add_headers(Authorization = str_c('bearer ', private))) %>% content(type = 'text', encoding = 'UTF-8') %>% fromJSON
+				})
+		} else {
+			connections.req <-
+				tryCatch({
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% fromJSON
+				}, warning = function(w) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% fromJSON
+				}, error = function(e) {
+					Sys.sleep(4)
+					str_c('https://api.are.na/v2/channels/', query, '/connections') %>% fromJSON
+				})
+		}
+
 
 		if(connections.req$channels %>% length > 0) {
-
-			Sys.sleep(0.2)
 
 			user.name <- connections.req$channels$user$username
 			user.slug <- connections.req$channels$user$slug
