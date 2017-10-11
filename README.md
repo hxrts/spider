@@ -17,6 +17,10 @@ Working prototype, but there are a couple setup steps for first time use:
 
 ```> install.packages('pacman') ; source('_daemon.R') ; q(save = 'no')```
 
+- in the root directory create a file called ```_secret.R```
+- register your app on [dev.are.na](https://dev.are.na/oauth/applications/new) and copy your personal access token.
+- edit ```_secret.R``` by pasting ```token = 'personal-access-token'``` and adding the token from [dev.are.na](https://dev.are.na)
+
 
 ## Run
 
